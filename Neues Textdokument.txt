@@ -1,0 +1,13 @@
+.. figure:: ./_pictures/logos/logo_MTEX.png
+   :scale: 50%
+   :align: center
+   :target: http://mtex-toolbox.github.io/
+   
+   `MTEX <http://mtex-toolbox.github.io/>`_
+
+.. figure:: ./_pictures/logos/logo_DAMASK.png
+   :scale: 40%
+   :align: center
+   :target: http://damask.mpie.de/
+   
+   `DAMASK <http://damask.mpie.de/>`_

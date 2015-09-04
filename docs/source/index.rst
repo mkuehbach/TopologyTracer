@@ -93,7 +93,12 @@ Specifically about GraGLeS:
  | An advanced level set approach to grain growth – Accounting for grain boundary anisotropy and finite triple junction mobility
  | Acta Materialia, 2015, 99
  | doi:10.1016/j.actamat.2015.07.040
-
+ 
+ 
+Funding:
+ | The authors gratefully acknowledge the support from the DFG in the frame of the Reinhart Kosselleck project (GO 3356/44-1).
+ | Furthermore, we acknowledge the support from the FZJuelich and RWTH Aachen University within the project JARAHPC projects. 
+ 
  
 Version history
 ^^^^^^^^^^^^^^^

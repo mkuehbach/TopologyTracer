@@ -54,8 +54,9 @@ In its current version the following six input arguments are necessary:
 
 
 During reading GraGLeS2D input data the TopologyTracer automatically determines the file size to plan how many snapshots that are consecutive in simulation time can be loaded into a single process. This improves data locality.
-However this requires a smart choice of the <6>. Imaging for instance 1000 snapshots of 50 GB in total now if 10 nodes are commissioned each given <6> as 10 GB, the first node is going to collect as many snapshot data until it filled its 10 GB, consequently only probably 5 nodes become work, while the others idle.
-On the other hand the number of process should not exceed the number of physical devices onto which the snapshot are stored as this would quickly congest physically the media servers.
+However, this requires a smart choice of the <6> argument. Exemplarily, imagine 1000 snapshots with 50 GB in total should be processed. Now, if 10 nodes are commissioned to this task, setting <6> to 10 GB would result in the first node collecting as many snapshot datas until its memory is filled to 10 GB, then the second process does the same, ..., resulting in only probably 5 nodes getting to work, while the others idle.
+On the other hand the number of process should not exceed the number of physical devices onto which the snapshot are stored as this would quickly congest physically the media servers. Assume congestion is insignificant up to 10 parallel streams.
+Then, the 1000 snapshots should be spread on 10 processes each hosting approximately 5 GB.
 
 
 .. toctree::
@@ -73,11 +74,7 @@ In its current state the TopologyTracer does not contain a GUI yet. Instead, pla
    :scale: 40%
    :align: center
    
-
-   
-   
-
-   
+  
 
 References
 ^^^^^^^^^^

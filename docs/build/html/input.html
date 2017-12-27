@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>GraGLeS 2D grain growth data format &mdash; TopologyTracer 0.1 documentation</title>
+    <title>XML Control File Settings &#8212; TopologyTracer 1.2 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1',
+        VERSION:     '1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,111 +23,412 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="TopologyTracer 0.1 documentation" href="index.html" />
-    <link rel="next" title="Compiling a growth history for individual grains" href="tracing.html" />
-    <link rel="prev" title="How to install TopologyTracer" href="setup.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="TopologyTracer 1.2 documentation" href="index.html" />
+    <link rel="next" title="Program execution" href="executing.html" />
+    <link rel="prev" title="What is TopologyTracer input?" href="simulate.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="tracing.html" title="Compiling a growth history for individual grains"
+          <a href="executing.html" title="Program execution"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="setup.html" title="How to install TopologyTracer"
+          <a href="simulate.html" title="What is TopologyTracer input?"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">TopologyTracer 0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <p>GraGLeS2D is a OpenMP-parallelized computer program for simulating the evolution of anisotropic grain growth phenomena in polycrystal that makes use of the level-set method. It is free to download from:</p>
-<div class="highlight-python"><div class="highlight"><pre>https://github.com/cmiessen/GraGLeS2D
-</pre></div>
+  <div class="section" id="xml-control-file-settings">
+<h1><strong>XML Control File Settings</strong><a class="headerlink" href="#xml-control-file-settings" title="Permalink to this headline">¶</a></h1>
+<p>The entire datamining is controlled by only one control parameter settings file &#8212; the <strong>TopologyTracer2D3D_Parameter.xml</strong> file. All angular values are expected in degrees!</p>
+<div class="section" id="analysis-mode">
+<h2>Analysis mode<a class="headerlink" href="#analysis-mode" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><strong>AnalysisMode</strong></div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">Determines which execution model and fundamental tasks should be executed.</div>
+<div class="line">Option (1) (the default) is for tracing data in parallel. It distributes an ensemble of Face/Texture data on the MPI processes.</div>
+<div class="line">Option (2) tracking sequentially by identifying first all grains close to boundaries, thereafter loading successively the files for processing.</div>
 </div>
-<div class="section" id="gragles-2d-grain-growth-data-format">
-<h1>GraGLeS 2D grain growth data format<a class="headerlink" href="#gragles-2d-grain-growth-data-format" title="Permalink to this headline">¶</a></h1>
-<p>For each time step at which a snapshot of the entire microstructure was taken, by default GraGLeS2D writes a plain ASCII file with the following syntax <strong>Texture_&lt;no&gt;.txt</strong>,
-where <strong>&lt;no&gt;</strong> is positiv and refers to the simulation step ID at which the snapshot was taken.</p>
-<p>Thus, a collection of <em>N</em> snapshots contains all pieces of information to extract the temporal trajectory of individual grains.
-Each such file, which is headerless and space-separated, contains always all still existent grains in the network, their properties and their neighbors.
-Specifically, the file layout reads as follows:</p>
-<ul class="simple">
-<li><strong>Identification ID</strong> - a positive grain label</li>
-<li><strong>Number of faces</strong> - how many neighbors does the grain possess</li>
-<li><strong>BoundaryFlag</strong> - is the grain located in contact with the simulation domain boundary (1 - yes, 0 - no)</li>
-<li><strong>Area</strong> - size normalized to the size (1.0) of the unit square simulation domain</li>
-<li><strong>AreaChange</strong> - size difference compared to previous time step</li>
-<li><strong>Perimeter</strong> - circumference</li>
-<li><strong>TotalBoundaryEnergy</strong> - face length times energy for each face</li>
-<li><strong>OrientationBunge1</strong> - Bunge convention Euler angle phi_1</li>
-<li><strong>OrientationBunge2</strong> - Bunge convention Euler angle PHI</li>
-<li><strong>OrientationBunge3</strong> - Bunge convention Euler angle phi_2</li>
-<li><strong>ID FaceLength</strong> - a list of exactly <em>Number of faces</em> data pairs indicating all neighbors with their ID and the length of the adjointing face</li>
-</ul>
-<p>An example file is included in the <em>example/</em> folder.</p>
+<div class="line">Make sure to populate GrainBoundaryContact with a file to be generate/or existent that stores the deadtimes of the grains.</div>
+<div class="line">You should switch on <strong>ProbeBoundaryContact</strong> to generate such file and switch it off once done and the file exists.</div>
+<div class="line-block">
+<div class="line">Option (3) reads sequentially a TargetGrainIDs file and a KNNFile to correlate the evolution of a grain with a prognosis
+of their evolution based on the k-th neighborhood in the initial structure (SnapshotFirst). The functionality is UNDOCUMENTED.</div>
+<div class="line">Option (4) reads binary GBContourPoints_&lt;fid&gt;.bin files to compute unbiased quantitative metrics for each nucleus to its long-range environment in 2d. The functionality is UNDOCUMENTED.</div>
+<div class="line">Option (5) is the currently only MonteCarlo discretely implemented extension of this in 3D. The functionality is UNDOCUMENTED.</div>
+</div>
+<div class="line">Option (6) reads binary GBContourPoints_&lt;fid&gt;.bin files to approximate for each grain the capillary driving force by evaluating the turning angles at the piecewise segmented grain boundary contour. The functionality works at the moment only for 2d contours.</div>
+<div class="line">Option (7) is UNDOCUMENTED.</div>
+</div>
+</div>
+</div>
+<div class="section" id="fundamental-settings">
+<h2>Fundamental settings<a class="headerlink" href="#fundamental-settings" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><strong>SnapshotFirst</strong></div>
+<div class="line-block">
+<div class="line">Specifies the integer index of the first dataset to analyze.</div>
+</div>
+<div class="line"><strong>SnapshotOffset</strong></div>
+<div class="line-block">
+<div class="line">Specifies the constant integer increment of datasets desired,</div>
+<div class="line">i.e. tracing is performed on the interval [First, Last] in increments of Offset.</div>
+</div>
+<div class="line"><strong>SnapshotLast</strong></div>
+<div class="line-block">
+<div class="line">Specifies the integer index of the last dataset to analyze.</div>
+<div class="line">All indices are integer, &gt;= 0. First and Last can be set to the same value to analyze only one dataset namely the SnapshotFirst.</div>
+</div>
+<div class="line"><strong>Dimensionality</strong></div>
+<div class="line-block">
+<div class="line">Is the dataset describing 2d (2) or 3d (3) simulations?</div>
+</div>
+<div class="line"><strong>LargestGrainID</strong></div>
+<div class="line-block">
+<div class="line">The user has to specify the maximum grain ID in the entire dataset.</div>
+</div>
+<div class="line"><strong>ProbeBoundaryContact</strong></div>
+<div class="line-block">
+<div class="line">You should switch this on only when in mode 2 to analyze once the dead times of the grains into a file named <strong>GrainBoundaryContact</strong>.</div>
+</div>
+</div>
+</div>
+<div class="section" id="physical-properties">
+<h2>Physical properties<a class="headerlink" href="#physical-properties" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><strong>HAGBMobility</strong></div>
+<div class="line-block">
+<div class="line">Specifies the <strong>maximum</strong> mobility of all grain boundaries (m^4/Js).</div>
+</div>
+<div class="line"><strong>HAGBEnergy</strong></div>
+<div class="line-block">
+<div class="line">Specifies the <strong>maximum</strong> specific energy of all grain boundaries (J/m^2).</div>
+</div>
+<div class="line"><strong>DislocEnPerM</strong></div>
+<div class="line-block">
+<div class="line">Specifies the product 0.5Gbb,i.e the dislocation line energy per unit length dislocation (J/m).</div>
+</div>
+<div class="line"><strong>PhysicalDomainEdgeLength</strong></div>
+<div class="line-block">
+<div class="line">Specifies the real distance which the simulation domain with InitialDomainEdgeLength represents (m).</div>
+</div>
+<div class="line"><strong>InitialDomainEdgeLength</strong></div>
+<div class="line-block">
+<div class="line">Specifies the integer edge length of the simulation domain to the beginning of the simulation (square in 2D, cube in 3D).</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><strong>Mind that all these settings have to meet those in the coarsening simulation!</strong></div>
+<div class="line"><strong>Especially, LargestGrainID is required as the largest unsigned integer grainID</strong></div>
+<div class="line">This is not necessarily the total number of grains in the simulation!</div>
+</div>
+</div>
+<div class="section" id="datamining-operations">
+<h2>Datamining operations<a class="headerlink" href="#datamining-operations" title="Permalink to this headline">¶</a></h2>
+<p>The following options define which analyses should be executed (1) or not (0).</p>
+<div class="line-block">
+<div class="line"><strong>AnalyzeGrainSizeQuantiles</strong></div>
+<div class="line-block">
+<div class="line">Computes descriptive means of the grain size (area, vol) and the volume-average quantiles for each Snapshot.</div>
+</div>
+<div class="line"><strong>AnalyzeSEE</strong></div>
+<div class="line-block">
+<div class="line">Approximates the CDF of the stored elastic energy in the grains in an area/volume averaged manner.</div>
+</div>
+<div class="line"><strong>AnalyzeMODF</strong></div>
+<div class="line-block">
+<div class="line">Approximates the CDF of the MODF (disorientation angles in boundary network (face segment length/area averaged)</div>
+<div class="line"><strong>This is not the MacKenzie plot (probability density of occurrence over disorientation angle) but its integrated form!</strong></div>
+<div class="line">Only considers boundaries between grains which both (instantaneously) do not make simulation domain boundary contact.</div>
+<div class="line"><em>GraGLeS outputs also an MODF, via an file MODF_</em> ASCII file. Numerical differences exist.*</div>
+</div>
+<div class="line"><strong>AnalyzeGSD</strong></div>
+<div class="line-block">
+<div class="line">Approximated a histogram of the population arithmetic average normalized distribution of grain sizes (area, volume).</div>
+</div>
+<div class="line"><strong>AnalyzeMaxSizeGainForward</strong></div>
+<div class="line-block">
+<div class="line">Computes for all grains the maximum size (area/volume) they obtain in all Snapshots.</div>
+</div>
+<div class="line"><strong>AnalyzeApproxRXFraction</strong></div>
+<div class="line-block">
+<div class="line">Determines two populations of grains: one with all grains which never touched the simulation domain boundaries</div>
+<div class="line">and another from those remaining in SnapshotLast (targets).</div>
+<div class="line">Therefrom it is computed the instantaneous coverage ratio (area, volume) of these targets with the population.</div>
+</div>
+<div class="line"><strong>AnalyzeTrajectoriesBackward</strong></div>
+<div class="line-block">
+<div class="line">Extracts a list of those grains in the last timestep (SnapshotLast) which not made contact with the simulation domain boundaries.</div>
+<div class="line">These grains are then followed backwards in time. This is the suggested mode of operation to follow the evolution of persistent grains.</div>
+</div>
+<div class="line"><strong>AnalyzeTrajectoriesForward</strong></div>
+<div class="line-block">
+<div class="line">Extracts first all grains which never during their existence, i.e. (size &gt; 0) made contact with simulation domain boundaries if any.</div>
+<div class="line">Then, their properties are tracked forward in time. If a grain disappeared earlier than SnapshotLast,</div>
+<div class="line">all succeeding result values for within the column vector are set to zero.</div>
+<div class="line"><strong>Mind that the resulting output can be very large as a total of 10 million grains initially tracked for 1000 snapshots will result in a matrix of 10 billion doubles!</strong></div>
+</div>
+<div class="line"><strong>AnalyzeAbnormalGrains</strong></div>
+<div class="line-block">
+<div class="line">Determines three populations of grains, all of which never touched simulation domain boundaries.</div>
+<div class="line">One from SnapshotLast (the possible AGG candidate grains).</div>
+<div class="line">One from all grains.</div>
+<div class="line">One of all the latter grains but excluding the candidates (the matrix).</div>
+<div class="line">It is evaluated for each time step the (spherical equivalent radius ratio) of the candidate grains to the matrix.</div>
+</div>
+<div class="line"><strong>AnalyzeKNN</strong></div>
+<div class="line-block">
+<div class="line">Determines the k-th order (nearest) neighbors to a target of the grains. Each grain of the dataset is inspected independently</div>
+<div class="line">and resulting in a successful detection only if none of the neighbors made contact with domain boundaries to prevent bias.</div>
+<div class="line">During this neighborhood analysis also the region boundary length is computed.</div>
+<div class="line">Between the 0-th and the 1-th order neighbor this is the grain boundary perimeter of the target itself.</div>
+<div class="line">Also the fraction of high-angle grain boundaries is computed. WORKFLOW IS UNDOCUMENTED!</div>
+</div>
+</div>
+<p>The following functions are currently UNDOCUMENTED</p>
+<div class="line-block">
+<div class="line"><strong>AnalyzeDrivingForceSEE</strong></div>
+<div class="line"><strong>AnalyzeMeanDrivingForceSEEForward</strong></div>
+<div class="line"><strong>AnalyzeSizeGainVsMatrixBackward</strong></div>
+<div class="line"><strong>AnalyzeSizeGainVsMatrixForward</strong></div>
+<div class="line"><strong>AnalyzeClassicalNucModels</strong></div>
+<div class="line"><strong>AnalyzeTopologyDifferenceForward</strong></div>
+</div>
+</div>
+<div class="section" id="datamining-operation-specific-settings">
+<h2>Datamining operation specific settings<a class="headerlink" href="#datamining-operation-specific-settings" title="Permalink to this headline">¶</a></h2>
+<p>Datamining is performed on the timestep interval [SnapshotFirst, SnapshotLast] in increments of SnapshotOffset. Grains with contact to the simulation domain boundaries (special grain ID 0) are expelled from the analyses in every case by default. The code allows for the implementation of utilizing results from simulations that were conducted under periodic boundary conditions to enable higher statistical significance. The latter is of particular interest for 3D simulations and <strong>in particular when quantifying the higher-order neighbors</strong>. The results are either stored in ASCII files (<strong>*.csv</strong>) or as binary matrices 2D (<strong>*.bin</strong>). The latter have no header but a <strong>speaking filename</strong> (&lt;whatever&gt;.F.&lt;SnapshotFirst&gt;.O.&lt;SnapshotOffset&gt;.L.&lt;SnapshotLast&gt;.NC.&lt;ncols&gt;.NR&lt;nrows&gt;.bin) which
+specifies the number of columns (NC) and rows (NR), respectively. In general, columns are column vectors, each of which encoding all grains at one time step, while rows are row vectors which specify properties of one grain along all time steps.
+With these definitions the binary results file read as a 2D matrix (grains-time) in implicit form by aligning entire column vectors according to their row ID contiguously in memory.</p>
+<div class="line-block">
+<div class="line"><strong>AnalyzeTrajectoriesForwardMode</strong></div>
+<div class="line-block">
+<div class="line">Modifies AnalyzeTrajectoriesForward, when unset (0) all grains are tracked, when set (1) the TopologyTracer requires TargetGrainIDs to be set in order to perform tracking only on these included IDs. Then an additional file needs to be supplied (<strong>TargetGrainIDS</strong>).</div>
+</div>
+<div class="line"><strong>MaximumNumberOfKShells</strong></div>
+<div class="line-block">
+<div class="line">Specifies the maximum order of (long-range) neighbors during the analysis AnalyzeKNN.</div>
+</div>
+<div class="line"><strong>HAGBDetectionThreshold</strong></div>
+<div class="line-block">
+<div class="line">When is a grain boundary considered as to be of high-angle character?</div>
+<div class="line">Sensible default in accordance with Read-Shockley theory is 15 degrees.</div>
+</div>
+<div class="line"><strong>DisoriAngleBinningMin</strong></div>
+<div class="line"><strong>DisoriAngleBinningMax</strong></div>
+<div class="line"><strong>DisoriAngleBinningWidth</strong></div>
+<div class="line-block">
+<div class="line">The values specify the binning of the MODF.</div>
+</div>
+<div class="line"><strong>StoredElasticEnergyBinningMin</strong></div>
+<div class="line"><strong>StoredElasticEnergyBinningMax</strong></div>
+<div class="line"><strong>StoredElasticEnergyBinningWidth</strong></div>
+<div class="line-block">
+<div class="line">The equivalent binning specification for the stored elastic energy density.</div>
+</div>
+<div class="line"><strong>GSDBinningMin</strong></div>
+<div class="line"><strong>GSDBinningMax</strong></div>
+<div class="line"><strong>GSDBinningWidth</strong></div>
+<div class="line-block">
+<div class="line">The equivalent binning specification for the mean-normalized size histogram.</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><strong>PersistenceRadiusMin</strong></div>
+<div class="line"><strong>PersistenceRadiusIncr</strong></div>
+<div class="line"><strong>PersistenceRadiusMax</strong></div>
+<div class="line-block">
+<div class="line">Radius (normalized to RVE domain edge length) of the fixed size reference window about each target for which the intruding neighboring is computed. The incrementer allows to setup a basic loop to sample differently sized reference windows within [Min,Min+Incr,Min+Incr+Incr,...,Max].</div>
+</div>
+<div class="line"><strong>UDSFile</strong></div>
+<div class="line-block">
+<div class="line">A uds file specifying the properties of all the grains in the synthetic structure. Is written by the microstructure generator.</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><strong>ComputeCurvatureAlsoAtTJP</strong></div>
+<div class="line-block">
+<div class="line">Flag to overwrite the default behavior that for supporting points close to junctions the curvature is not computed into a scalar average of the grain. See supplementary material to the long-range environment reference paper for more details.</div>
+</div>
+<div class="line"><strong>TranslateBinary2GNU</strong></div>
+<div class="line-block">
+<div class="line">Does what it reads at the cost of potentially significant disk space.</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><strong>CapillaryActivityTargets</strong></div>
+<div class="line-block">
+<div class="line">Allows to reduce list of target grains to specific user-defined set of IDs rather than to operate on grains of all IDs in the input data.</div>
+</div>
+<div class="line"><strong>CapillaryActivityMode</strong></div>
+<div class="line-block">
+<div class="line">Without digging into source code, leave with 0.</div>
+</div>
+</div>
+</div>
+<div class="section" id="auxiliary-files">
+<h2>Auxiliary files<a class="headerlink" href="#auxiliary-files" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><strong>GrainBoundaryContact</strong></div>
+<div class="line-block">
+<div class="line">See explanation for analysis mode 2 and ProbeBoundaryContact.</div>
+</div>
+<div class="line"><strong>TargetGrainIDs</strong></div>
+<div class="line-block">
+<div class="line">Enables to supply a headerless ASCII file of grainIDs (only positive 32-bit unsigned int IDs on interval</div>
+<div class="line-block">
+<div class="line">[1,LargestGrainID] are interpreted) in order to restrict analyses to specific grains.</div>
+<div class="line">Specifically, when AnalyzeTrajectoriesForward is chosen (1)</div>
+<div class="line">and AnalyzeTrajectoriesForwardMode set to tracking forward (1) in time the forward tracking is performed only for</div>
+<div class="line">these targets and not the entire population to reduce the overall size of the output.</div>
+</div>
+</div>
+<div class="line"><strong>KNNFile</strong></div>
+<div class="line-block">
+<div class="line">enables to supply a single line header-equipped ASCII file with the layout grainID, x, y</div>
+<div class="line">coordinate for a currently UNDOCUMENTED option.</div>
+</div>
+<div class="line"><strong>GNUFile</strong></div>
+<div class="line-block">
+<div class="line">A gnu 2D grain boundary contour file. The functionality is UNDOCUMENTED and DEPRECATED.</div>
+</div>
+</div>
+</div>
+<div class="section" id="additional-settings">
+<h2>Additional settings<a class="headerlink" href="#additional-settings" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><strong>OnlyProbeTheWorkPartitioning</strong></div>
+<div class="line-block">
+<div class="line">In mode 1 this option allows to execute only the dataset partitioning planning without reading the heavy data.</div>
+<div class="line">This allows to plan the allocated load partitioning and to verify that all</div>
+<div class="line">processes get snapshot data volume as equally as possible distributed.</div>
+</div>
+<div class="line"><strong>LocalDatabaseMaximumSize</strong></div>
+<div class="line-block">
+<div class="line">Controls the maximum size of binary data (Faces, Texture) which a single MPI process accepts to store and process in AnalysisModes 1 and 2.</div>
+<div class="line">At the moment the workpartitioning works as follows: i) it computes the total size of all binary file pairs, ii) then it partitions on the MPI processes.</div>
+<div class="line">These do usually <strong>but not necessarily handle an equal number of Faces,Texture binary file pairs!</strong></div>
+<div class="line"><strong>In every case the processes neither handle incomplete snapshots nor do they share or duplicate snapshot data!</strong></div>
+<div class="line">Namely, either they handle as many datasets (pairs Faces/Texture) as their capacity allows. If their capacity is exceeded,</div>
+<div class="line">the next process accumulates snapshots, until either there are no more snapshots to distribute and the processing can start or the program has to exit in a controlled manner because all processes have already been exhausted and should no longer load snapshot data. Hence, the value must be chosen with care. The idea behind this concept is to enable the user to set an upper bound on how much memory the MPI processes have to supply at least to load snapshot data and thus prevent the program from flooding memory or running in above hard memory limits when running in batch queues.</div>
+<div class="line">The design implies that the more data per process are set the more processes with the higher rank IDs will idle as the partitioning</div>
+<div class="line">of snapshots proceeds in the order of the MPI process ID (rank). On the contrary, if the value is too low such as that they do not</div>
+<div class="line">allow to partition the entire ensemble, the post-processing terminates.**</div>
+</div>
+<div class="line"><strong>MPIReadBlockLength</strong></div>
+<div class="line-block">
+<div class="line">Sensible default of the MPI I/O buffer size.</div>
+</div>
+<div class="line"><strong>MaxIDRange</strong></div>
+<div class="line-block">
+<div class="line">Sensible default for how many contiguous grain IDs are stored per IDBucket. The smaller this value is chosen,</div>
+<div class="line">the more buckets are required but also the proportionally lower it is the time to find a specific grain.</div>
+<div class="line">Clearly, the value is performance relevant, as the larger the value is set the proportionally more grains have to be</div>
+<div class="line">scanned on average before finding a specific. On the contrary, a very small value will reduce the total</div>
+<div class="line">number of checks but eventually may not end up in pointing to aligned pieces of memory, unless additional measures of</div>
+<div class="line">improving contiguity (with for instance the jemalloc allocator class) are enforced.</div>
+<div class="line">Hence, the value should be in the order of the size of single cache block times size(unsigned int). 100 is a sensible default.</div>
+<div class="line">The choice to go for a concept of IDBuckets rather than a hashfield of pointer is to avoid the</div>
+<div class="line">storing of many NULL pointer for non-existent IDs for those snapshots in which only few IDs remain.</div>
+</div>
+<div class="line"><strong>MemRegionsX</strong></div>
+<div class="line"><strong>MemRegionsY</strong></div>
+<div class="line"><strong>MemRegionsZ</strong></div>
+<div class="line-block">
+<div class="line"><strong>Required to be 1</strong></div>
+<div class="line">An integer spatial partitioning of the domain into regions. All grains whose barycenter are in the region are</div>
+<div class="line">handled by an independent memory handler that is a local memory region class object. This improves memory locality for a future</div>
+<div class="line">OpenMP extension of the code, as then shared memory accessess within the region are more likely found in local caches.</div>
+</div>
+<div class="line"><strong>DeveloperMode</strong></div>
+<div class="line-block">
+<div class="line">With this option enabled (1) each binary file is translated into an ASCII file.</div>
+<div class="line"><strong>Make sure to disable this option (0) whenever running production jobs!</strong></div>
+</div>
+</div>
+</div>
 </div>
 
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong>XML Control File Settings</strong></a><ul>
+<li><a class="reference internal" href="#analysis-mode">Analysis mode</a></li>
+<li><a class="reference internal" href="#fundamental-settings">Fundamental settings</a></li>
+<li><a class="reference internal" href="#physical-properties">Physical properties</a></li>
+<li><a class="reference internal" href="#datamining-operations">Datamining operations</a></li>
+<li><a class="reference internal" href="#datamining-operation-specific-settings">Datamining operation specific settings</a></li>
+<li><a class="reference internal" href="#auxiliary-files">Auxiliary files</a></li>
+<li><a class="reference internal" href="#additional-settings">Additional settings</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="setup.html"
-                        title="previous chapter">How to install TopologyTracer</a></p>
+  <p class="topless"><a href="simulate.html"
+                        title="previous chapter">What is TopologyTracer input?</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="tracing.html"
-                        title="next chapter">Compiling a growth history for individual grains</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/input.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <p class="topless"><a href="executing.html"
+                        title="next chapter"><strong>Program execution</strong></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/input.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="tracing.html" title="Compiling a growth history for individual grains"
+          <a href="executing.html" title="Program execution"
              >next</a> |</li>
         <li class="right" >
-          <a href="setup.html" title="How to install TopologyTracer"
+          <a href="simulate.html" title="What is TopologyTracer input?"
              >previous</a> |</li>
-        <li><a href="index.html">TopologyTracer 0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2015, Markus Kuehbach.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Markus Kuehbach.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>

@@ -1,0 +1,7 @@
+**Compile a growth history for individual grains**
+==================================================
+
+Consider the Matlab scripts in the *scripts/* folder.
+
+
+**Please note that these scripts provide only the key functionalities to import TopologyTracer results data into MATLAB. Hence, they require adaptation to the analysis target desired.**

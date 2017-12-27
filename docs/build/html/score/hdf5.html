@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HDF5 data transfer SCORE to DAMASK &#8212; TopologyTracer 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">TopologyTracer 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hdf5-data-transfer-score-to-damask">
+<h1>HDF5 data transfer SCORE to DAMASK<a class="headerlink" href="#hdf5-data-transfer-score-to-damask" title="Permalink to this headline">¶</a></h1>
+<p>The purpose of this work is to enable the loading of customized partially-recrystallized microstructures
+into the DAMASK solver and to set specific initial dislocation densities to each of the voxels. Furthermore,
+we desire to monitor the evolution of the microstructure to become able to output right at the point in
+time when the recrystallized volume forms a percolating network. For these tasks we write out HDF5 files.</p>
+<p>Currently this is implemented by making calls to the HDF5 C library which requires particular care when
+attempting to execute from within a parallel region of a hybrid MPI/OpenMP program.</p>
+<p>The following steps are necessary:</p>
+<p>1.) Get the HDF5 source:
+1a.) Download the HDF5 source code from <a class="reference external" href="https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar">https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar</a>
+1b.) Store the tar archive in the external/hdf5p folder and untar it via <strong>tar xf &lt;filename.tar&gt;</strong>
+1c.) Change directory into &lt;filename&gt;</p>
+<p>2.) Set up the console environment:
+2a.) Set up your environment to us <strong>the same compiler for the HDF5 library as the SCORE executable</strong>
+2b.) On the RWTH Aachen University cluster for instance this reads as:
+2c.)    <strong>module unload intel</strong>, to get rid of the default compiler and MPI implementation
+2d.) <strong>module unload openmpi</strong>
+2e.) module <strong>load intel/17.0</strong>, to load a compiler and a matching MPI that supports at least MPI_THREAD_FUNNELED
+2f.) module <strong>load intelmpi/2017</strong></p>
+<p>As of January/2017 <strong>do not load</strong> the already existent hdf5 library from the
+module load LIBRARIES, module load hdf5 command as this compile is inconsistent with the intel/17.0 compiler and
+a very old compile!</p>
+<p>3.) Build the Parallel HDF5 library from source:
+3a.) Configure the a parallel build of the library by <strong>./configure &#8211;enable-parallel</strong>
+3b.) Make the library via <strong>make</strong>
+3c.) Check the library via <strong>make check</strong>
+3d.) Find the dynamic link library so file in /src/.libs/libhdf5.so
+3e.) Copy this file into the SCORE/src/thirdparty/ folder</p>
+<p>4.) Set up environment for executing SCORE
+4a.) export OMP_NUM_THREADS=1, to define maximum number of OpenMP threads per process
+4b.) ulimit -s unlimited, to increase the thread-local stack size
+4c.) Pin OMP threads via export KMP_AFFINITY=verbose,scatter</p>
+<p>5.) Build SCORE with utilizing this library
+5a.) Make sure to use the same compiler and MPI
+5b.) From within build type <strong>cmake -DCMAKE_BUILD_TYPE=Release ..</strong>
+5c.) Compile and link the MPI/OpenMP/HDF5 hybrid program via <strong>make</strong></p>
+<p>6.) Execute via <strong>mpiexec -n &lt;nranks&gt; scorehybrid &lt;filename.uds&gt; &lt;simid&gt;</strong></p>
+<p>Pin MPI process via ###.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/score/hdf5.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">TopologyTracer 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Markus Kuehbach.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
+    </div>
+  </body>
+</html>

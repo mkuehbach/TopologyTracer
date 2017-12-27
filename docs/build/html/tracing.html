@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Compiling a growth history for individual grains &mdash; TopologyTracer 0.1 documentation</title>
+    <title>Compile a growth history for individual grains &#8212; TopologyTracer 1.2 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1',
+        VERSION:     '1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,79 +23,100 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="TopologyTracer 0.1 documentation" href="index.html" />
-    <link rel="prev" title="GraGLeS 2D grain growth data format" href="input.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="TopologyTracer 1.2 documentation" href="index.html" />
+    <link rel="next" title="Output data format specification" href="results.html" />
+    <link rel="prev" title="Program execution" href="executing.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="input.html" title="GraGLeS 2D grain growth data format"
+          <a href="results.html" title="Output data format specification"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="executing.html" title="Program execution"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">TopologyTracer 0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <div class="section" id="compiling-a-growth-history-for-individual-grains">
-<h1>Compiling a growth history for individual grains<a class="headerlink" href="#compiling-a-growth-history-for-individual-grains" title="Permalink to this headline">¶</a></h1>
-<p>Consider the MATLAB scripts in the <em>scripts/</em> folder.</p>
+  <div class="section" id="compile-a-growth-history-for-individual-grains">
+<h1><strong>Compile a growth history for individual grains</strong><a class="headerlink" href="#compile-a-growth-history-for-individual-grains" title="Permalink to this headline">¶</a></h1>
+<p>Consider the Matlab scripts in the <em>scripts/</em> folder.</p>
+<p><strong>Please note that these scripts provide only the key functionalities to import TopologyTracer results data into MATLAB. Hence, they require adaptation to the analysis target desired.</strong></p>
+<p>These scripts are the originals I used for post-processing the long-range effects paper results:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Kühbach, M.</div>
+<div class="line"><em>On the Significance of the Long-Range Environment and Capillary Contributions</em></div>
+<div class="line"><em>for Nucleating Abnormal Grain Growth and Recrystallization</em></div>
+<div class="line">submitted to Acta Materialia, 2018</div>
+</div>
+</div></blockquote>
 </div>
 
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="input.html"
-                        title="previous chapter">GraGLeS 2D grain growth data format</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/tracing.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <p class="topless"><a href="executing.html"
+                        title="previous chapter"><strong>Program execution</strong></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="results.html"
+                        title="next chapter"><strong>Output data format specification</strong></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tracing.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="input.html" title="GraGLeS 2D grain growth data format"
+          <a href="results.html" title="Output data format specification"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="executing.html" title="Program execution"
              >previous</a> |</li>
-        <li><a href="index.html">TopologyTracer 0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2015, Markus Kuehbach.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Markus Kuehbach.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>

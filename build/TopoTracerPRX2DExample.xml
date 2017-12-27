@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters>
+	<!--CHOOSE WHICH TYPE OF ANALYSIS IS DESIRED-->
+	<AnalysisMode>2</AnalysisMode>
+	<!--if not explicitly state otherwise the following analyses modes require a collection of specific input files, input file pairs
+		they process time series single-grain resolved with timesteps <fid> on the inclusive interval 
+		SnapshotFirstSnapshotLast in SnapshotOffset increments
+	<!--1 track growth history in parallel via input file pairs of Texture_<fid>.bin surplus Faces_<fid>.bin-->
+	<!--2 track growth history sequentially via first ProbingForGrainBoundaryContact, thereafter loading successively the heavy data instead of keeping all in global memory-->
+	<!--3 UNDOCUMENTED sequential loading of a KNN file and a target file to correlate evolution of grain with initial growth prognosis-->
+	<!--4 compute unbiased quantitative growth propensity measures, (2d) requires GBContourPoints_<fid>.bin binary input files-->
+	<!--5 ... (3d) CURRENTLY MC approximation, pairs of Container_<fid>_size_<edgelength>.raw binary surplus Microstructure_<fid>.uds ASCII file required-->
+	<!--6 compute approximate local curvature and related effective capillary driving force terms, (2d) requires GBContourPoints_<fid>.bin-->
+	<!--7 extract single-grain-resolved temporal trajectory of capillary activity data from snapshots-->
+	
+	<!--GENERAL SPECIFICATION TIMESTEPS fid-->
+	<SnapshotFirst>5190</SnapshotFirst>
+	<SnapshotOffset>1</SnapshotOffset>
+	<SnapshotLast>5200</SnapshotLast>
+	<Dimensionality>2</Dimensionality>
+	<LargestGrainID>9900000</LargestGrainID>
+	<!--largest grain ID ever occurring in the entire dataset, utilize to set up quick access hash tableau-->
+	
+	<!--PHYSICAL PARAMETER-->
+	<HAGBMobility>7.5e-14</HAGBMobility>
+	<!--unit:m^4/Js, maximum mobility of grain boundary population utilized in the simulation-->
+	<HAGBEnergy>1.000</HAGBEnergy>
+	<!--unit:J/m^2, maximum specific free energy of grain boundary population utilized in the simulation-->
+	<DislocEnPerM>1.44e-9</DislocEnPerM>
+	<!--unit:J/m, fixed temperature elastic line energy of dislocation 0.5Gb^2-->
+	<PhysDomainEdgeLength>4.2037e-3</PhysDomainEdgeLength>
+	<!--unit:m, physical length the edge length of the RVE represents-->
+ 
+	<!--ANALYSIS MODE 1 and 2 SPECIFIC SETTINGS-->
+	<ProbeBoundaryContact>1</ProbeBoundaryContact>
+	<!--if set to 1 and working in mode 2 sequentially first all Texture files are loaded and boundary contact inspected otherwise existent file is taken-->
+	<LocalDatabaseMaximumSize>10.0e9</LocalDatabaseMaximumSize>
+	<!--unit:Byte, how much datasets of pairs Texture_<fid>.bin surplus Faces_<fid>.bin to process per MPI rank, works as follows:
+		MPI ranks starting at rank 0 collect work by probing file size of TextureFaces binary file pairs and accepting up to local maximum value,
+		then passing to next rank, until either 1 all files are already distributed (some ranks therefore may get no work), 2 last rank already
+		full by still file pairs to assign (tracking will not start, instead fail, avoid this by utilizing OnlyProbeWorkPartitioning option, or 3
+		work will be partitioned, for grain coarsening in general higher numbered ranks will process more but small files-->
+	<OnlyProbeTheWorkPartitioning>0</OnlyProbeTheWorkPartitioning>
+	<!--quick finetune LocalDatabaseMaximumSize in mode 1, end program in mode 2 after boundaryContact generated, 
+		namely if set to 1 only the work partitioning will be planned but no file entirely loaded nor processed-->
+	
+	<!-- WHAT TO ANALYZE DURING TRACKING-->
+	<AnalyzeGrainSizeQuantiles>0</AnalyzeQuantiles>
+	<AnalyzeSEE>0</AnalyzeSEE>
+	<AnalyzeMODF>0</AnalyzeMODF>
+	<AnalyzeGSD>0</AnalyzeGSD>
+	<AnalyzeDrivingForceSEE>0</AnalyzeDrivingForceSEE>
+	<AnalyzeMaxSizeGainForward>0</AnalyzeMaxSizeGainForward>
+	<AnalyzeMeanDrivingForceSEEForward>1</AnalyzeMeanDrivingForceSEEForward>
+	<AnalyzeApproxRXFraction>0</AnalyzeApproxRXFraction>
+	<AnalyzeTrajectoriesBackward>0</AnalyzeTrajectoriesBackward>
+	<AnalyzeAbnormalGrains>0</AnalyzeAbnormalGrains>
+	<AnalyzeSizeGainVsMatrixBackward>0</AnalyzeSizeGainVsMatrixBackward>
+	<!-- the following tracking modes are not available for 2-->
+	<AnalyzeTrajectoriesForward>0</AnalyzeTrajectoriesForward>
+	<AnalyzeKNN>0</AnalyzeKNN>
+	<!--the following analyses are currently undocumented-->
+	<AnalyzeClassicalNucModels>0</AnalyzeClassicalNucModels>
+	<AnalyzeTopologyDifferenceForward>0</AnalyzeTopologyDifferenceForward>
+	<!--currently only supported for sequential analysis-->
+		
+	<!--ANALYSIS MODE 1/2 SPECIFIC SETTINGS-->
+	<AnalyzeTrajectoriesForwardMode>0</AnalyzeTrajectoriesForwardMode>
+	<!--(0) auto-detect from dataset, potentially taking all, (1) pre-scribe which to take namely only the IDs from TargetGrainIDs-->
+	<MaximumNumberOfKShells>16</MaximumNumberOfKShells>
+	<HAGBDetectionThreshold>15.0</HAGBDetectionThreshold>
+	<DisoriAngleBinningMin>0.0</DisoriAngleBinningMin>
+	<DisoriAngleBinningMax>62.8</DisoriAngleBinningMax>
+	<DisoriAngleBinningWidth>0.1</DisoriAngleBinningWidth>
+	<!-- 0.1 degrees practical resolution limit for electron-diffraction based techniques-->
+	<StoredElasticEnergyBinningMin>1.0e13</StoredElasticEnergyBinningMin>
+	<StoredElasticEnergyBinningMax>1.0e16</MaximumStoredElasticBinningMax>
+	<StoredElasticEnergyBinningWidth>1.0e12</StoredElasticEnergyBinningWidth>
+	<!--one percent of maximum value usually suffices-->
+
+	<GSDBinningMin>0.0</GSDBinningMin>
+	<GSDBinningMax>9.0</GSDBinningMax>
+	<GSDBinningWidth>0.01</GSDBinningWidth>
+	<!--grains smaller min classified into first bin, grains larger max classified into last bin-->	
+	
+	<!--ANALYSIS MODE 3 SPECIFIC SETTINGS-->
+		
+	<!--ANALYSIS MODE 4 and 5 SPECIFIC SETTINGS-->
+	<PersistenceRadiusMin>0.008</PersistenceRadiusMin>
+	<PersistenceRadiusIncr>0.001</PersistenceRadiusIncr>
+	<PersistenceRadiusMax>0.008</PersistenceRadiusMax>
+	<InitialDomainEdgeLength>21269</InitialDomainEdgeLength>
+	<!--required to allow mapping of absolute pixel coordinates for grains about initial locations 
+		into relative coordinates on the 0 1 domain when utilizing the GraGLeS solver-->
+	<UDSFile>Microstructure.uds</UDSFile>
+		
+	
+	
+	<!--ANALYSIS MODE 6 SPECIFIC SETTINGS-->
+	<ComputeCurvatureAlsoAtTJP>0</ComputeCurvatureAlsoAtTJP>
+	<!--(0) no approximation of a curvature value for a point on the contour that represents or is close to a triple point, (1) do so-->
+	<TranslateBinary2GNU>0</TranslateBinary2GNU>
+	<!--if switched on (1) each binary is translated into a three column gnu file to enable rendering the microstructure-->
+	
+	
+	<!--ANALYSIS MODE 7 SPECIFIC SETTINGS-->
+	<CapillaryActivityTargets>0</CapillaryActivityTargets>
+	<!-- 0 all, 1 only from TargetGrainIDs-->
+	<CapillaryActivityMode>0</CapillaryActivityMode>
+	<!--(0) get scalar value of temporal mean of curvature etc, (1) get matrix of temporal history of these values-->
+	
+	<!--SPECIFIC ADDITIONAL FILES depending on analysis mode-->
+	<TargetGrainIDs>AGG2D_UnsuccessfulTargets.dat</TargetGrainIDs>
+	<KNNFile>TopoTracer2D3D._SimID.10.KNN.ID.10.csv</KNNFile>
+	<GNUFile>Network_Timestep_</GNUFile>
+	<GrainBoundaryContact>TopoTracer2D3D.SimID.105200.GrainBoundaryContact.F.10.O.1.L.5200.csv</GrainBoundaryContact>
+	
+	<!--PARALLEL PERFORMANCE best practice and data partitioning relevant settings -->
+	<MPIReadBlockLength>10485760</MPIReadBlockLength>
+	<!--unit:Byte, how much to read at most in one MPI_File_read I/O call per rank-->
+	<MaxIDRange>100</MaxIDRange>
+	<!--maximum number of contiguous grain IDs per IDBucket, the smaller the more buckets but the proportionally less time before finding a gID-->
+	<MemRegionsX>1</MemRegionsX>
+	<MemRegionsY>1</MemRegionsY>
+	<MemRegionsZ>1</MemRegionsZ>
+	<!--SO FAR UNTESTED EXTENSION of an ADDITIONAL domain decomposition when processing Texture/Faces in parallel-->
+	
+	<!--NOTES and NOT WELL DOCUMENTED-->
+	<DeveloperMode>0</DeveloperMode>
+	<!-- if set to 1 much IO and ASCII files to check data consistency, otherwise not-->
+
+	<!-- in GraGeLes the rho is rho * Gbb/gamma*PhysDomainSize-->
+	<!--MaxSizeGainFW 0.0 only if grain too close to boundary, otherwise maximum size the grain grew to-->
+	<!-- ApproxRXFraction takes all grains with no bnd contact from the SnapshotLast and calculates their volume fraction
+		to total volume fraction of grains not touching the boundary per timestep-->
+	
+</Parameters>

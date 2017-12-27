@@ -1,125 +1,113 @@
-.. Documentation to the TopologyTracer
-.. ===================================
+ .. figure:: ../images/TopologyTracerLogo.png
+   :scale: 45%
+   :align: left
+   :target: http://github.com/mkuehbach/TopologyTracer
+      
+TopologyTracer is an MPI/OpenMP-parallelized datamining tool for conducting spatio-temporal analyses of microstructural element dynamics. Its purpose is the quantification of correlations --- spatial and temporal --- between individual microstructural elements and their higher-order neighboring elements. Currently, the software allows comprehensive studies of individual grains' volume evolution and set their growth history into relation to the evolution of their higher-order neighbors. The tool is unique in two ways: on the one hand in its ability to process these surveys in parallel and thereby handle hitherto intractable large datasets including millions of grains. On the other hand in its capability to explicitly take the spatial distribution of the long range neighborhood into account.
 
-TopologyTracer is a postprocessing tool for the identification of structural changes in the topology, the properties of grains, and their neighbors from grain growth simulation data conducted in synthetic polycrystals. 
-The source is developed by Markus Kuhbach at the Institute of Physical Metallurgy and Metal Physics.
+The source code was developed by Markus Kühbach during his PhD time with Luis A. Barrales-Mora and Günter Gottstein at the Institute of Physical Metallurgy and Metal Physics (IMM_) with RWTH Aachen University. Being now with the Max-Planck-Institut fur Eisenforschung GmbH in Düsseldorf, I maintain the code, though at disregular intervals. Nonetheless, feel free to utilize the tool, do not hesitate contacting me for sharing thoughts, suggesting improvements, or reporting your experiences.
 
- .. figure:: ../images/IMMLogo.png
-   :scale: 50%
-   :align: center
-
+ .. _IMM: http://www.imm.rwth-aachen.de
 
 1. Getting started
 ^^^^^^^^^^^^^^^^^^
 
-The compilation of TopologyTracer utilizes standard Linux tools.
-
 .. toctree::
    :maxdepth: 2
      
+   basics
+   refs
    setup
    
 
 2. Creating input
 ^^^^^^^^^^^^^^^^^
-
- .. figure:: ../images/SCubeBiProtrusions.jpg
-   :scale: 40%
-   :align: center   
-   
    
 .. toctree::
    :maxdepth: 2
       
    simulate
-   input
-   
 
-3. Tracing grains
-^^^^^^^^^^^^^^^^^
+3. TopologyTracing
+^^^^^^^^^^^^^^^^^^
 
-By default it is assumed that the executable is placed in the same folder as the raw data. Then, **tracing**, i.e. the process of postprocessing time-resolved data with TopologyTracer is invoked with the following command line call::
+TopologyTracing requires at least to have
 
-   mpiexec -n <proc> topologytracer <1> <2> <3> <4> <5> <6>
-   
-In its current version the following six input arguments are necessary:
- | <proc> **HowManyProcesses**
- | <1> **JobID** a positive integer to distinguish the simulation output from other data
- | <2> **N0** the number of grains found in total in the earliest time step. It is assumed that upon grain growth the number of grains shrinks.
- | <3> **<First>** ID of the first snapshot that should be considered, positive integer
- | <4> **<Offset>** how many simulation steps are the snapshots apart, positive integer
- | <5> **<Last>** ID of the last snapshot that should be considered, positive integer
- | <6> **<MemoryPerProcess>** how much physical memory is guaranteed to be safely written to per process, in MB
+1. A collection of ID contiguous binary data file pairs, i.e. Faces_*.bin and Texture_*.bin binary files,
+2. The topotracer2d3d executable,
+3. A XML control file all in the same folder. 
 
+Several analysis routines require additional files as it is explained for many in the input section.
 
+With these prerequisites, TopologyTracing, i.e. the datamining of simulation data, requires two steps: 
+  | 1. Setup the control file
+  | 2. Specify the post-processing tasks
 
-During reading GraGLeS2D input data the TopologyTracer automatically determines the file size to plan how many snapshots that are consecutive in simulation time can be loaded into a single process. This improves data locality.
-However this requires a smart choice of the <6>. Imaging for instance 1000 snapshots of 50 GB in total now if 10 nodes are commissioned each given <6> as 10 GB, the first node is going to collect as many snapshot data until it filled its 10 GB, consequently only probably 5 nodes become work, while the others idle.
-On the other hand the number of process should not exceed the number of physical devices onto which the snapshot are stored as this would quickly congest physically the media servers.
-
+Both tasks are accomplished via the XML control file:
 
 .. toctree::
    :maxdepth: 2
-   
+      
+   input
+   executing
    tracing
-   
-   
+   results
+
+
 4. Visualizing results
 ^^^^^^^^^^^^^^^^^^^^^^
-
-In its current state the TopologyTracer does not contain a GUI yet. Instead, plain MPI I/O raw files are being generated and postprocessed with the MATLAB scripts available in the *scripts* folder.
+In its current state, the TopologyTracer does not contain a GUI. Instead, plain MPI I/O raw files and ASCII files are generated which require post-processing with for instance Matlab scripts available in the **scripts** folder. In general one can visualize a growth path by the plot3(X,Y,Z) command and access a distribution of values via the histogram function. Therein X, Y, Z specify each a row vector of length NC for a particular grain ID in row r.
 
 .. figure:: ../images/SCubeBiFastestSlowest.jpg
    :scale: 40%
    :align: center
    
-
-   
-   
-
-   
-
-References
-^^^^^^^^^^
-
-For the method itself:
- | Kuhbach M., Barrales-Mora L.A., Miessen C., Gottstein G.: 
- | **Ultrafast analysis of individual grain behavior during grain growth by parallel computing** 
- | Proceedings of the 36th Riso International Symposium on Materials Science 
- | doi:10.1088/1757-899X/89/1/012031
-
-Specifically about GraGLeS:
- | Miessen C., Liesenjohann M., Barrales-Mora L.A., Shvindlerman L.S., Gottstein G.
- | An advanced level set approach to grain growth – Accounting for grain boundary anisotropy and finite triple junction mobility
- | Acta Materialia, 2015, 99
- | doi:10.1016/j.actamat.2015.07.040
  
- 
-Funding:
- | The authors gratefully acknowledge the support from the DFG in the frame of the Reinhart Kosselleck project (GO 3356/44-1).
- | Furthermore, we acknowledge the support from the FZJuelich and RWTH Aachen University within the project JARAHPC projects. 
- 
+Funding
+^^^^^^^
+| The authors gratefully acknowledge the support from the DFG in the frame of the Reinhart Koselleck project (GO 335/44-1). 
+| Furthermore, we acknowledge the support from the FZJülich and RWTH Aachen University within the JARAHPC research alliance.
+| In addition I would like to acknowledge the provision of computing resources by the Max Planck-Institut für Eisenforschung GmbH.
  
 Version history
 ^^^^^^^^^^^^^^^
+| **v1.2**	
+|			Implementation of tracking mode 2 which does not require any longer the entire dataset to be loaded in main memory, but
+|			instead reads successively files for analyses. This patch makes the program also applicable to low main memory workstations.
+|			Implementation of 3D extension to unbiased longer range environment measures via Monte Carlo sampling,
+|			curvature estimation via binary contour line data single-grain-resolved for arbitrary number of time steps, 
+|			binning of stored elastic energy in grain population, tracking of maximum size of grain during its existence. 
+|			Bug fixing, implementation of allocation error handling, performance updates in particular beneficial for handling 
+|			hundred thousand grain ID long lists of candidate grains for population categorization.
+|			Clean-up of source code debris and documentation of cmake script.
+|			Clean-up of and provision of Matlab-based analysis scripts for post-processing and their core documentation.
 
- | **v0.1** first set of functionalities to obtain temporal trajectories in topology/mobility/energy phase space, simple neighbor correlations and disorientation
+| **v1.0** 	
+|			Successful switch from ASCII- to binary file-based workflow, locality-aware data organization, and tree-based
+|			data storage improved raw data I/O by orders of magnitude. Furthermore, it made collecting random grain properties 
+|			orders of magnitude more efficient. Novel algorithm to identify k-th order neighbors makes now possible the tracking
+|			of arbitrary k-th order neighbors. Novel analysis routines make possible the comparison to classical theory of abnormal grain
+|			growth and classical nucleation criteria (Bailey-Hirsch, sub-grain size distribution spreading to name but a few).
+|			Additionally, the code supports now functionality to compute analytically the triangle-circle intersection area.
+			
+| **v0.1** 	
+|			Implementation of first set of functionalities to obtain temporal trajectories in topology/mobility/energy-phase space for the Riso 2015 conference with simple neighbor correlations and disorientation.
 
-   
 Licence
 ^^^^^^^
 
-The project is licenced under the GNU v2.0
+.. toctree::
+   :maxdepth: 2
+   
+   licence
 
-
-.. Indices and tables
-.. ==================
-
-.. * :ref:`genindex`
-.. * :ref:`modindex`
-.. * :ref:`search`
 
 Questions, contributions
 ^^^^^^^^^^^^^^^^^^^^^^^^
+Just let me know or contact *m.kuehbach@mpie.de*
 
-Just let me know or contact *markus.kuehbach@rwth-aachen.de*
+
+Future plans
+^^^^^^^^^^^^
+| **v1.3**
+|			Documentation, 3D curvature computation, triple line tracking

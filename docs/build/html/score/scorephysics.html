@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Learn about the physical background to the model &#8212; TopologyTracer 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">TopologyTracer 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="learn-about-the-physical-background-to-the-model">
+<h1>Learn about the physical background to the model<a class="headerlink" href="#learn-about-the-physical-background-to-the-model" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><div class="figure align-center">
+<a class="reference internal image-reference" href="score/../images/AA8079LCR706min300C.png"><img alt="score/../images/AA8079LCR706min300C.png" src="score/../images/AA8079LCR706min300C.png" /></a>
+</div>
+</div></blockquote>
+<p>Band contrast SEM/EBSD image of an electropolished AA8079 sample after 70% cold-rolling and isothermal annealing at 300 deg C for 6 minutes.
+.. The rolling direction is parallel to the scale bar. Blue denotes grains in cube orientation, high-angle grain boundaries drawn in black.</p>
+<p>Recrystallization and recovery term a variety of deformation microstructure restoration processes during which the stored elastic energy in the deformed microstructure drives the elimination of excess dislocations and the migration of grain boundaries. Specifically the <em>static recrystallization</em> refers to a form of recrystallization which occurs after the deformation was applied. For microstructure evolution during the annealing of cold-rolled sheet material
+this static recrystallization is of significant technical interest. The physical mechanisms and the strength of the driving forces distinguishes it from static recovery and other forms of grain growth.</p>
+<p><strong>Scope of the model:</strong></p>
+<p>The SCORE model is designed for the simulation of the growth of new nuclei under the effect of anisotropic
+grain boundary mobility and heterogeneous deformation microstructures, i.e. for simulating <em>static recrystallization</em>.
+Furthermore, SCORE encompasses approximate models for the nucleation stage. As with every model the nature of the processes is depicted in simplified manner by making the following assumptions:</p>
+<ul class="simple">
+<li>A microstructure volume comprises cubic voxel as the smallest discretization unit.</li>
+<li>The deformation microstructure can be idealized in contiguous regions with homogeneous properties (orientation, dislocation density).</li>
+<li>Therein nuclei appear which are strain- and excess dislocation free.</li>
+<li>Grain boundary migration follows classical rate theory according to Turnbull&#8217;s model.</li>
+<li>Grain boundary migration is simplified as a flat boundary sweeping the deformation structure.</li>
+<li>The intrinsic grain boundary mobility is only dependent on the crystallographic disorientation of the adjoining grains.</li>
+<li>The deformation microstructure remains static in terms of orientation and boundaries content.</li>
+<li>However the (statistically stored) dislocation density is allowed to evolve. This is referred to as recovery modeling, for which approximate physical models exist.</li>
+<li>Recrystallizing nuclei do not rotate or change their orientation during growth.</li>
+<li>A potential growth inhibitating effect of second-phase particles is modeled in accordance with the Zener-Smith theory.</li>
+</ul>
+<p><strong>Relevance of the model:</strong></p>
+<p>These conditions apply well to many cases of cold-rolled aluminium, nickel, copper alloys and steels, but require that the driving force stemming for dislocations is at least an order of magnitude larger than that of curvature.
+Under these conditions the SCORE model can predict the course of microstructure transformation in particular kinetics, indicate potential changes in the macrotexture, resolv spatially the impingement of individual nuclei and hence allows to extract very accurately the grain size distribution. The benefit of the model compared to similar approaches is
+that it enables the simultaneous initialization and execution of multiple computational domains over which the results
+can be averaged or analyzed in all details collectively. This renders the simulations statistical significant
+and sufficiently discretized to minimize bias and to quantify uncertainty that persist to unknown extend in other recrystallization models.</p>
+<dl class="docutils">
+<dt><strong>Further reading:</strong></dt>
+<dd><div class="first line-block">
+<div class="line">Cotterill, P., Mould, P. R.</div>
+<div class="line">Recrystallization and Grain Growth in Metals</div>
+<div class="line">Surrey University Press, London, 1976</div>
+</div>
+<div class="line-block">
+<div class="line">Humphreys, F. J., Hatherly, M.</div>
+<div class="line">Recrystallization and Related Annealing Phenomena</div>
+<div class="line">Pergamon Press, 2003</div>
+<div class="line">ISBN: 978-0-08-044164-1</div>
+</div>
+<div class="line-block">
+<div class="line">Gottstein, G.</div>
+<div class="line">Physical Foundations of Materials Science</div>
+<div class="line">Springer, Berlin, 2010</div>
+<div class="line"><a class="reference external" href="http://dx.doi.org/doi:10.1007/978-3-662-09291-0">http://dx.doi.org/doi:10.1007/978-3-662-09291-0</a></div>
+</div>
+<div class="line-block">
+<div class="line">Gottstein, G., Shvindlerman, L. S.</div>
+<div class="line">Grain Boundary Migration in Metals: Thermodynamics, Kinetics, Applications</div>
+<div class="line">CRC Press, Boca Raton, 2010</div>
+<div class="line">ISBN 9781420054354</div>
+</div>
+<div class="last line-block">
+<div class="line">Hallberg, H.</div>
+<div class="line">Approaches to Modeling of Recrystallization</div>
+<div class="line">Metals, 2011, 1, 16-48</div>
+<div class="line"><a class="reference external" href="http://dx.doi.org/doi:10.3390/met1010016">http://dx.doi.org/doi:10.3390/met1010016</a></div>
+</div>
+</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/score/scorephysics.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">TopologyTracer 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Markus Kuehbach.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>In a nutshell &#8212; TopologyTracer 1.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="TopologyTracer 1.2 documentation" href="index.html" />
+    <link rel="next" title="References" href="refs.html" />
+    <link rel="prev" title="1. Getting started" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="refs.html" title="References"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="1. Getting started"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="in-a-nutshell">
+<h1><strong>In a nutshell</strong><a class="headerlink" href="#in-a-nutshell" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-the-topologytracer">
+<h2>What is the TopologyTracer?<a class="headerlink" href="#what-is-the-topologytracer" title="Permalink to this headline">¶</a></h2>
+<p>Currently, a software for the datamining of dump snapshots obtained from densely sampled instrumented grain coarsening simulations.</p>
+</div>
+<div class="section" id="what-are-the-user-benefits">
+<h2>What are the user benefits?<a class="headerlink" href="#what-are-the-user-benefits" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><strong>Enabling studies with orders of magnitude more grains and thus higher statistical significance by parallelization</strong></div>
+<div class="line"><br /></div>
+<div class="line"><strong>Unique capability of considering higher-order neighbors</strong></div>
+</div>
+</div>
+<div class="section" id="what-sets-the-topologytracer-apart-from-other-tools-like-dream3d-or-mtex">
+<h2>What sets the TopologyTracer apart from other tools like DREAM3D or MTex?<a class="headerlink" href="#what-sets-the-topologytracer-apart-from-other-tools-like-dream3d-or-mtex" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line"><strong>Spatio-temporal capabilities</strong></div>
+</div>
+<p>While the aforementioned tools&#8217; strength is their ability to compute distributional descriptive statistics, like the grain size distribution or the orientation distribution function (ODF), they fall still short in their spatio-temporal and correlative capabilities. Additionally, they have much lower scalability as they do so far not employ parallelization. Thus, it remains the user&#8217;s responsibility to add parallel functionality into the source code or set up batch processing queues via modifying the analysis scripts. Either way, this is not only a tedious task but in particular with respect to the scripting environment not straightforward to implement in a manner to advise the script interpreter exactly and in full control of the user were data should be stored to employ as much memory locality as possible: that is to assure that data which describe the microstructure in local regions are mapped as closely as possible into main memory such that their processing requires less costly memory queries.</p>
+<div class="line-block">
+<div class="line"><strong>Scalable efficient parallel design</strong></div>
+</div>
+<p>By contrast, the TopologyTracer improves on this with its two-layer data parallelism. The individual datasets, each of which represents one time step, are elements in the coarser <a class="reference external" href="http://www.mcs.anl.gov/research/projects/mpi/">MPI</a>-layer. Each MPI process hosts a contiguous set of all datasets over a particular time step interval. Additionally, each dataset is stored spatially partitioned into memory regions. These become mapped in such a manner as to reduce the number of remote memory accesses. It is exactly this data-locality-improvement-oriented design which suits potential thread-parallel execution with <a class="reference external" href="http://www.openmp.org">OpenMP</a> for instance. Several pieces of this MPI/OpenMP-hybrid parallel scheme have already been implemented.</p>
+<p>The figure illustrates this two-level parallelism.</p>
+<blockquote>
+<div><div class="figure align-center">
+<a class="reference internal image-reference" href="_images/TopologyTracerMemoryHierarchy.jpg"><img alt="_images/TopologyTracerMemoryHierarchy.jpg" src="_images/TopologyTracerMemoryHierarchy.jpg" style="width: 800.0px; height: 505.6px;" /></a>
+</div>
+</div></blockquote>
+<p>In particular the logical and physical partitioning of the data in the second layer is fundamental to achieve scalable performance by improving data locality. This stands in clear contrast to many proprietary Materials Science software packages which still rely on traditional data structures commonly employed during sequential programming and their execution via scripting-language-based post-processing during which the complexity of data placement is opaque to the user. This opacity is the key to making perceivingly easily maintainable most Computational Materials Science scripting workflows. At the same time, though, it is the prime brake for achieving performance and thereby productive workflows - in particular for ever growing datasets. Admittedly, one could also employ thread parallelism without worrying about locality aspects. Beyond some problem-specific thread count threshold, though, this practice results in increasingly less performant execution as internally frequent remote memory accesses will be required. Exactly, these will then effectively saturate most contemporary memory infrastructures on not only super computers but also workstations and therefore prevent the quick delivering of data to the floating point processing units.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong>In a nutshell</strong></a><ul>
+<li><a class="reference internal" href="#what-is-the-topologytracer">What is the TopologyTracer?</a></li>
+<li><a class="reference internal" href="#what-are-the-user-benefits">What are the user benefits?</a></li>
+<li><a class="reference internal" href="#what-sets-the-topologytracer-apart-from-other-tools-like-dream3d-or-mtex">What sets the TopologyTracer apart from other tools like DREAM3D or MTex?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">1. Getting started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="refs.html"
+                        title="next chapter"><strong>References</strong></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/basics.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="refs.html" title="References"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="1. Getting started"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Markus Kuehbach.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

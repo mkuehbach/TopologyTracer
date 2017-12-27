@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>How to install TopologyTracer &mdash; TopologyTracer 0.1 documentation</title>
+    <title>Setup &#8212; TopologyTracer 1.2 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1',
+        VERSION:     '1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,98 +23,155 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="TopologyTracer 0.1 documentation" href="index.html" />
-    <link rel="next" title="GraGLeS 2D grain growth data format" href="input.html" />
-    <link rel="prev" title="1. Getting started" href="index.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="TopologyTracer 1.2 documentation" href="index.html" />
+    <link rel="next" title="What is TopologyTracer input?" href="simulate.html" />
+    <link rel="prev" title="References" href="refs.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="input.html" title="GraGLeS 2D grain growth data format"
+          <a href="simulate.html" title="What is TopologyTracer input?"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="1. Getting started"
+          <a href="refs.html" title="References"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">TopologyTracer 0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <div class="section" id="how-to-install-topologytracer">
-<h1>How to install TopologyTracer<a class="headerlink" href="#how-to-install-topologytracer" title="Permalink to this headline">¶</a></h1>
-<p>TopologyTracer utilizes tools to simplify the tracing of simulation data.</p>
-<ol class="arabic simple">
-<li>Check your Linux installation for cmake and make</li>
-<li>Pull the project from the git repository <a class="reference external" href="https://github.com/mkuehbach/TopologyTracer">https://github.com/mkuehbach/TopologyTracer</a></li>
-<li>Check your compiler. Both the Intel compiler (v14.0 or newer) and the GNU compiler can be utilized</li>
-<li>Open a console and <em>cd build</em></li>
-<li>Only once when setting up a new computer <em>cmake -DCMAKE_BUILD_TYPE=Release ..</em></li>
-<li>Compile the program with <em>make</em></li>
-<li>Find happily the binary in <em>build</em></li>
-</ol>
+  <div class="section" id="setup">
+<h1><strong>Setup</strong><a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="which-prerequisites-are-necessary">
+<h2>Which prerequisites are necessary?<a class="headerlink" href="#which-prerequisites-are-necessary" title="Permalink to this headline">¶</a></h2>
+<p>The compilation of the program utilizes open source libraries as well as standard Linux tools.</p>
+<ul class="simple">
+<li>Check your Linux installation for a working installation of a <strong>C/C++ build system</strong> including <strong>cmake</strong> and <strong>make</strong>.</li>
+<li>Check your <strong>C and C++ compiler</strong>. We utilized successfully the Intel (v14.0 and newer) and the GNU (v4.8 and newer) compiler.</li>
+<li>You need a working installation of an <a class="reference external" href="http://www.mcs.anl.gov/research/projects/mpi/">MPI</a> (Message Passing Interface) API library to be able to compile the program.</li>
+<li>We utilized successfully both the OpenMPI (v1.10.4 and newer) and the IntelMPI (2017.0.12) implementation.</li>
+<li>The minimum threading support level of the MPI implementation required is <strong>MPI_THREAD_FUNNELED</strong>.</li>
+<li>You need a working installation of the <strong>Boost C++ libraries</strong>. Details on where to get it and how to install are found <a class="reference external" href="http://www.boost.org">here</a>.</li>
+<li>The shipped-with default version of Boost of at least Ubuntu 16.04 provided to me all functionality required.</li>
+<li>You need the <strong>Eigen libraries</strong> that come along with the TopologyTracer package. Further information to this library is <a class="reference external" href="http://eigen.tuxfamily.org/">provided</a>.</li>
+</ul>
+</div>
+<div class="section" id="which-prerequisites-are-optional">
+<h2>Which prerequisites are optional?<a class="headerlink" href="#which-prerequisites-are-optional" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>It is well-known that the general purpose standard malloc(3) memory allocator class implementation does not assure that in particular many small allocations become locality-aware placed. Hence, the performance of the TopologyTracer can be improved by linking against an alternative memory allocator class, such as <strong>Jason Evans jemalloc</strong>. A documentation of how to obtain the library and how to compile it can be found <a class="reference external" href="http://www.canonware.com/jemalloc/">online</a>.</li>
+<li>In the future, an OpenMP-parallelization and HDF5 extension of the TopologyTracer is planned. So far however HDF5 is not required to run the TopologyTracer.</li>
+</ul>
+</div>
+<div class="section" id="where-to-get-source-code-from">
+<h2>Where to get source code from?<a class="headerlink" href="#where-to-get-source-code-from" title="Permalink to this headline">¶</a></h2>
+<p>TopologyTracer is available for Linux only. It is free software.</p>
+<ul class="simple">
+<li>Download the source from its git repository <strong>https://github.com/mkuehbach/TopologyTracer</strong></li>
+<li>Eventually unpack the repository such that finally the following ends up in a single folder.</li>
+<li>This folder from now on will be called the <strong>root</strong> directory. You can give it any Linux-conformant name.</li>
+<li>Make sure in this root there is a <strong>src</strong> subdirectory with the cpp and the h source code files,</li>
+<li>a <strong>build</strong> directory for storing the executable and an exemplary <strong>XML control file</strong>.</li>
+<li>Additionally, check whether there is a <strong>CMakeLists.txt</strong> file in the root folder.</li>
+<li>Next, utilize the top section of this CMakeList.txt file to switch on and off the compiler (GNU or Intel)</li>
+<li>Next, open a console and dive into the <strong>build</strong> directory.</li>
+<li>If now its the first time you compile the TopologyTracer type <strong>cmake ..</strong>.</li>
+<li>This inspects your system and generates a customized makefile for you.</li>
+<li>Next use this makefile by typing <strong>make</strong> to compile the program.</li>
+<li>Upon success you should now have a <strong>binary</strong> within build called <strong>topotracer2d3d</strong></li>
+</ul>
+</div>
+<div class="section" id="placement-of-files">
+<h2>Placement of files<a class="headerlink" href="#placement-of-files" title="Permalink to this headline">¶</a></h2>
+<p>The resulting executable expects the XML control file always in its current location folder!. Relative indexing is utilized. Other than that restriction, the executable can be renamed and relocated. The latter enables the scripting of TopologyTracer job queues and executing batch jobs.</p>
+</div>
+<div class="section" id="optimization">
+<h2>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h2>
+<p>If desired, adjust the level of compiler optimization via the OPTLEVEL variable in the CMakeLists.txt upper section. OPTLEVEL &#8220;-O0&#8221; means no optimization and should be utilized for debugging purposes only, while &#8220;-O3&#8221; is the maximum and recommended level for production tasks. Improvements between the two extremes vary between a factor of 2 - 5 faster with maximum optimization compared to without.</p>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting?!<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<p>If in between the compilation process unrecoverable errors occur, attempt first a <strong>make clean</strong> command.
+If this does not help: Delete everything in the build folder except for the <strong>TopologyTracer2D3D_Parameter.xml</strong> control file and start over with <strong>cmake ..</strong>.</p>
+<p>Utilizing the GNU compiler? If the __int64 definition is unknown to the preprocessor and the code therefore does not complains, does not compile: define it as typedef long __int64 in the <strong>TopologyTracer_Topology.cpp</strong>.</p>
+</div>
 </div>
 
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong>Setup</strong></a><ul>
+<li><a class="reference internal" href="#which-prerequisites-are-necessary">Which prerequisites are necessary?</a></li>
+<li><a class="reference internal" href="#which-prerequisites-are-optional">Which prerequisites are optional?</a></li>
+<li><a class="reference internal" href="#where-to-get-source-code-from">Where to get source code from?</a></li>
+<li><a class="reference internal" href="#placement-of-files">Placement of files</a></li>
+<li><a class="reference internal" href="#optimization">Optimization</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting?!</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">1. Getting started</a></p>
+  <p class="topless"><a href="refs.html"
+                        title="previous chapter"><strong>References</strong></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="input.html"
-                        title="next chapter">GraGLeS 2D grain growth data format</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/setup.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <p class="topless"><a href="simulate.html"
+                        title="next chapter">What is TopologyTracer input?</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/setup.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="input.html" title="GraGLeS 2D grain growth data format"
+          <a href="simulate.html" title="What is TopologyTracer input?"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="1. Getting started"
+          <a href="refs.html" title="References"
              >previous</a> |</li>
-        <li><a href="index.html">TopologyTracer 0.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2015, Markus Kuehbach.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Markus Kuehbach.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>

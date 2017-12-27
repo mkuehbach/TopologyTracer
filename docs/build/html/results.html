@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Output data format specification &#8212; TopologyTracer 1.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="TopologyTracer 1.2 documentation" href="index.html" />
+    <link rel="next" title="The project is licenced under the GNU v3.0" href="licence.html" />
+    <link rel="prev" title="Compile a growth history for individual grains" href="tracing.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="licence.html" title="The project is licenced under the GNU v3.0"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tracing.html" title="Compile a growth history for individual grains"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="output-data-format-specification">
+<h1><strong>Output data format specification</strong><a class="headerlink" href="#output-data-format-specification" title="Permalink to this headline">¶</a></h1>
+<p>The TopologyTracer generates a number of binary results file which can be visualized and processed with Matlab. These files do not include the simulated or scaled real physical time. <strong>That one has to be supported manually as a part of the Matlab analysis!</strong></p>
+<p>In what follows, a 64-bit C/C++ double precision floating point value reads as <strong>d</strong>, a 32-bit integer as <strong>i</strong>, and a 32-bit unsigned integer as <strong>ui</strong>. The byte order is read and written assuming LittleEndian. MPI I/O views by default all files with displacement = 0, etype = MPI_TYPE and filetype = MPI_BYTE. The TopologyTracer follows this default. All files encode as 2D matrices of an elemental datatype (either d,i, or ui, or an MPI struct) as a number of nc columns of a contiguous block (row) of size nr each. All means are arithmetic mean values.</p>
+<p><strong>The results filenames are speaking with NR = nr and NC = nc!</strong></p>
+<p><strong>Mind that in all what follows the statement all grains means explicitly all grains filtered for the analysis. This number is not necessarily equal to the number of grains in the population, because if the simulation is performed with open boundary conditions the grains touching the domain boundary have been expelled from the analysis!</strong>
+In general the TopologyTracer assumes that the grain with ID 0 is a special grain, namely a proxy ID for the RVE domain itself. Equivalently, we can state that the TopologyTracer utilizes Fortran ID labeling for grains and faces.</p>
+<div class="section" id="analyze-vol-quantiles">
+<h2>analyze_vol_quantiles()<a class="headerlink" href="#analyze-vol-quantiles" title="Permalink to this headline">¶</a></h2>
+<p>Writes two files <strong>VolQuantiles</strong> which specifies the n = STATISTICS_VOL_NQUANTILES (currently 100) (1/n,2/n,...,n/n) quantile of the distribution of grain size (area (2D), volume (3D)). Specifically, nr = n and nc = (SnapshotLast - SnapshotFirst)/SnapshotOffset + 1.
+The elemental datatype is d.</p>
+<p>The file <strong>VolMeta</strong> provides descriptive statistics with nr = 1 and nc as above. The elemental type is a contiguous MPI struct of five d. They encode</p>
+<ul class="simple">
+<li>The total area covered by all grains considered</li>
+<li>The mean size</li>
+<li>The variance</li>
+<li>The total number of grains in the snapshot</li>
+<li>The total number of grains considered (for mean and var)</li>
+</ul>
+</div>
+<div class="section" id="analyze-vol-forward">
+<h2>analyze_vol_forward()<a class="headerlink" href="#analyze-vol-forward" title="Permalink to this headline">¶</a></h2>
+<p>Writes four 2D matrices, all with the same layout. Except for <strong>FW.NF</strong>, whose elemental datatype is ui, all others have d.</p>
+<ul class="simple">
+<li><strong>FW.NF</strong> is the number of neighbors</li>
+<li><strong>FW.VOL</strong> is the size of the grains (micron^Dimensionality)</li>
+<li><strong>FW.HAGBFRAC</strong> gives fraction of boundary (length (2D), area (3D) with disorientation of target and neighbor &gt;= HAGBDetectionThreshold</li>
+<li><strong>FW.MOBDSEE</strong> gives area-weighted product of mobility * (stored elastic energy nbor - stored elastic energy target) (m/s)</li>
+</ul>
+<p>Values for no longer existing grains get filled up with zeros!</p>
+</div>
+<div class="section" id="analyze-vol-backward">
+<h2>analyze_vol_backward()<a class="headerlink" href="#analyze-vol-backward" title="Permalink to this headline">¶</a></h2>
+<p>Monitor for all targets (grains which survived the coarsening step up to SnapshotLast) backwards in time for the evolution of their faces, size, HAGB fraction, and instantaneous biased velocity. <strong>Even though tracking is performed backwards, the organization of the matrix is positive in time, i.e. higher column vector indices mean later in time.</strong></p>
+<p>The layout and content is the same as for analyze_vol_forward(). The only differences are the file name suffixes.</p>
+<ul class="simple">
+<li><strong>BK.NF</strong></li>
+<li><strong>BK.VOL</strong></li>
+<li><strong>BK.HAGBFRAC</strong></li>
+<li><strong>BK.MOBDSEE</strong></li>
+</ul>
+</div>
+<div class="section" id="analyze-sizegain-vs-bk">
+<h2>analyze_sizegain_vs_bk()<a class="headerlink" href="#analyze-sizegain-vs-bk" title="Permalink to this headline">¶</a></h2>
+<p>Idea: for all survivors identify in each snapshot how their size is relative to the mean of the matrix.
+The matrix constitutes of all grains excluding the survivors. Writes one 2D matrix of elemental type d.
+Each first entry in each row describes the number of matrix grains remaining, while the second entry the mean size of the matrix grains.</p>
+<ul class="simple">
+<li><strong>SIZEGAINBK</strong></li>
+</ul>
+</div>
+<div class="section" id="analyze-approx-rxfraction">
+<h2>analyze_approx_rxfraction()<a class="headerlink" href="#analyze-approx-rxfraction" title="Permalink to this headline">¶</a></h2>
+<p>Calculate approximate recrystallized area/volume fraction assuming the following.
+Matrix grains constitute all grains. The recrystallized grains are all those which survive the coarsening, i.e. all remaining up to SnapshotLast.
+A 2D matrix with nr = 1 is written. The elemental datatype is a contiguous MPI_struct of d. These detail</p>
+<ul class="simple">
+<li>The total size of all grains considered in the analysis</li>
+<li>The total size covered by the targets, i.e. the considered as recrystallized</li>
+<li>The recrystallized coverage as TotalSizeTargets/TotalSizeAllGrains</li>
+<li>The total number of all grains considered in the analysis but were still detectable in the snapshot</li>
+<li>The total number of rxgrains</li>
+</ul>
+</div>
+<div class="section" id="analyze-modf">
+<h2>analyze_modf()<a class="headerlink" href="#analyze-modf" title="Permalink to this headline">¶</a></h2>
+<p>Writes a 2D matrix of doubles (d) which encodes the disorientation distribution function (MDF) with equiangular adjustable binning, via nr = largest positive integer ( MaxDisoriAngle/DisoriAngleBinWidth) and nc = 1 + ((SnapshotLast-SnapshotFirst)/SnapshotOffset+1). The first row of the matrix gives the bin ends in degrees. Thereafter, the MDF for each snapshot follows.</p>
+</div>
+<div class="section" id="analyze-see">
+<h2>analyze_see()<a class="headerlink" href="#analyze-see" title="Permalink to this headline">¶</a></h2>
+<p>Same layout as analyze_modf. First row gives bin ends. Thereafter, each snapshot.</p>
+</div>
+<div class="section" id="analyze-gsd">
+<h2>analyze_gsd()<a class="headerlink" href="#analyze-gsd" title="Permalink to this headline">¶</a></h2>
+<p>Equal in mentality and data output structure to SEE and MODF.</p>
+</div>
+<div class="section" id="analyze-abnormal-graingrowth">
+<h2>analyze_abnormal_graingrowth()<a class="headerlink" href="#analyze-abnormal-graingrowth" title="Permalink to this headline">¶</a></h2>
+<p>Writes a 2D matrix of structs containing 13 doubles (d) each which encode the following</p>
+<p>The total size of all grains in the list of</p>
+<ul class="simple">
+<li>survivors</li>
+<li>matrix</li>
+<li>matrix exclusive survivors</li>
+</ul>
+<p>The equivalent radius of</p>
+<ul class="simple">
+<li>survivors</li>
+<li>matrix</li>
+<li>matrix exclusive survivors</li>
+</ul>
+<p>The remaining number of grains in</p>
+<ul class="simple">
+<li>survivors</li>
+<li>matrix</li>
+<li>matrix exclusive survivors</li>
+</ul>
+<p>The number of abnormal large grains, i.e. whose equivalent radius is larger than 3.0 the average of the individual populations</p>
+<ul class="simple">
+<li>matrix exclusive survivors abnormal when testing against mean of matrix</li>
+<li>matrix exclusive survivors abnormal when testing against mean of matrix exclusive survivors</li>
+<li>survivors abnormal when testing against mean of matrix</li>
+<li>survivors abnormal when testing against mean of matrix exclusive survivors</li>
+</ul>
+<p>Mind that when approaching SnapshotLast the population of matrix grains ceases because this understood as the matrix into which the survivors grow.</p>
+</div>
+<div class="section" id="currently-undocumented">
+<h2><strong>Currently undocumented</strong><a class="headerlink" href="#currently-undocumented" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>analyze_grainsize_quantiles()</li>
+<li>analyze_drivingforce_see()</li>
+<li>analyze_topologydifference_forward()</li>
+<li>analyze_classical_nucmodels()</li>
+<li>analyze_knn_naive()</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><strong>Output data format specification</strong></a><ul>
+<li><a class="reference internal" href="#analyze-vol-quantiles">analyze_vol_quantiles()</a></li>
+<li><a class="reference internal" href="#analyze-vol-forward">analyze_vol_forward()</a></li>
+<li><a class="reference internal" href="#analyze-vol-backward">analyze_vol_backward()</a></li>
+<li><a class="reference internal" href="#analyze-sizegain-vs-bk">analyze_sizegain_vs_bk()</a></li>
+<li><a class="reference internal" href="#analyze-approx-rxfraction">analyze_approx_rxfraction()</a></li>
+<li><a class="reference internal" href="#analyze-modf">analyze_modf()</a></li>
+<li><a class="reference internal" href="#analyze-see">analyze_see()</a></li>
+<li><a class="reference internal" href="#analyze-gsd">analyze_gsd()</a></li>
+<li><a class="reference internal" href="#analyze-abnormal-graingrowth">analyze_abnormal_graingrowth()</a></li>
+<li><a class="reference internal" href="#currently-undocumented"><strong>Currently undocumented</strong></a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tracing.html"
+                        title="previous chapter"><strong>Compile a growth history for individual grains</strong></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="licence.html"
+                        title="next chapter"><strong>The project is licenced under the GNU v3.0</strong></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/results.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="licence.html" title="The project is licenced under the GNU v3.0"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tracing.html" title="Compile a growth history for individual grains"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TopologyTracer 1.2 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Markus Kuehbach.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

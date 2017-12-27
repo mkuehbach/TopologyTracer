@@ -1,0 +1,50 @@
+HDF5 data transfer SCORE to DAMASK
+==================================
+
+The purpose of this work is to enable the loading of customized partially-recrystallized microstructures 
+into the DAMASK solver and to set specific initial dislocation densities to each of the voxels. Furthermore,
+we desire to monitor the evolution of the microstructure to become able to output right at the point in
+time when the recrystallized volume forms a percolating network. For these tasks we write out HDF5 files.
+
+Currently this is implemented by making calls to the HDF5 C library which requires particular care when
+attempting to execute from within a parallel region of a hybrid MPI/OpenMP program.
+
+The following steps are necessary:
+
+1.) Get the HDF5 source:
+1a.) Download the HDF5 source code from https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar
+1b.) Store the tar archive in the external/hdf5p folder and untar it via **tar xf <filename.tar>**
+1c.) Change directory into <filename>
+
+2.) Set up the console environment:
+2a.) Set up your environment to us **the same compiler for the HDF5 library as the SCORE executable**
+2b.) On the RWTH Aachen University cluster for instance this reads as:
+2c.)	**module unload intel**, to get rid of the default compiler and MPI implementation
+2d.) **module unload openmpi**
+2e.) module **load intel/17.0**, to load a compiler and a matching MPI that supports at least MPI_THREAD_FUNNELED
+2f.) module **load intelmpi/2017**
+
+As of January/2017 **do not load** the already existent hdf5 library from the 
+module load LIBRARIES, module load hdf5 command as this compile is inconsistent with the intel/17.0 compiler and
+a very old compile!
+
+3.) Build the Parallel HDF5 library from source:
+3a.) Configure the a parallel build of the library by **./configure --enable-parallel**
+3b.) Make the library via **make**
+3c.) Check the library via **make check**
+3d.) Find the dynamic link library so file in /src/.libs/libhdf5.so
+3e.) Copy this file into the SCORE/src/thirdparty/ folder
+
+4.) Set up environment for executing SCORE
+4a.) export OMP_NUM_THREADS=1, to define maximum number of OpenMP threads per process
+4b.) ulimit -s unlimited, to increase the thread-local stack size
+4c.) Pin OMP threads via export KMP_AFFINITY=verbose,scatter
+
+5.) Build SCORE with utilizing this library
+5a.) Make sure to use the same compiler and MPI
+5b.) From within build type **cmake -DCMAKE_BUILD_TYPE=Release ..**
+5c.) Compile and link the MPI/OpenMP/HDF5 hybrid program via **make**
+
+6.) Execute via **mpiexec -n <nranks> scorehybrid <filename.uds> <simid>**
+
+Pin MPI process via ###.

@@ -1,0 +1,59 @@
+**Setup**
+=========
+
+Which prerequisites are necessary?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The compilation of the program utilizes open source libraries as well as standard Linux tools.
+
+* Check your Linux installation for a **working** installation of a **C/C++ build system** including **cmake** and **make**.
+* Check your C and C++ compiler. We utilized successfully the **Intel** (v14.0 and newer) and the **GNU** (v4.8 and newer) compiler.
+* You need a working installation of an MPI_ (Message Passing Interface) API library to be able to compile the program. The minimum threading support level is MPI_THREAD_FUNNELED. We utilized successfully both the OpenMPI (v1.10.4 and newer) and the IntelMPI (2017.0.12) implementation.
+* You need a working installation of the Boost C++ libraries. Details on where to get it and how to install are found here_.
+* You need the Eigen libraries that come along with the TopologyTracer package. Further information to this library is provided_.
+
+
+.. _MPI: http://www.mcs.anl.gov/research/projects/mpi/
+.. _here: http://www.boost.org 
+.. _provided: http://eigen.tuxfamily.org/
+ 
+Which prerequisites are optional?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* It is well-known that the general purpose standard malloc(3) memory allocator class implementation does not assure that in particular many small allocations become locality-aware placed. Hence, the performance of the TopologyTracer can be improved by linking against an alternative memory allocator class, such as **Jason Evans jemalloc**. A documentation of how to obtain the library and how to compile it can be found online_.
+* In the future an OpenMP-parallelization and HDF5 extension of the TopologyTracer is planned. So far however HDF5 is not required to run the TopologyTracer.
+
+.. _online: http://www.canonware.com/jemalloc/
+
+Where to get source code from?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TopologyTracer is available for Linux only. It is free software.
+
+* Download the source from its git repository https://github.com/mkuehbach/TopologyTracer
+* Make sure to have a directory named of your choice. From now on we will call this the **root** directory. 
+* Place the content of the git repository in this root folder and unpack.
+* Make sure in this root there is a **src** subdirectory with the cpp and h source code file, a **build** directory for the storing of the executable and an exemplary XML control file. Additionally, check whether there is a CMakeLists.txt file in the root folder. 
+* Next, open a console and dive into the project's build folder.
+
+How to build?
+^^^^^^^^^^^^^
+
+1. Make sure to have a directory named of your choice that we will call for now the **root**. Place the content of the git repository therein.
+2. Make sure in this root there is a **src** subdirectory to place the source code and a **build** directory for storing the executable and an exemplary parameterization **TopologyTracer2D3D_Parameter.xml** file.
+3. Assure there is a **CMakeLists.txt** file in the root.
+4. Open a console, dive into the project's **build** folder.
+5. The first lines of the CMakeLists.txt enable you to choose the compiler. 
+6. Only once when setting up a new computer type **cmake ..**. This inspects your system and generates a customized makefile automatically. If desired, adjust the level of compiler optimization via the OPTLEVEL variable in the CMakeLists.txt upper section.
+7. Compile the program by the shell command **make**.
+
+The resulting executable expects the XML control file always in its current location folder!. Relative indexing is utilized.
+Other than that restriction, the executable can be renamed and relocated. The latter enables the scripting of TopologyTracer job queues and the running of batch jobs.
+
+OPTLEVEL "-O0" means no optimization and is for debugging purposes, while "-O3" is the maximum and recommended level for production tasks. Improvements between the two extremes vary between a factor of 2 - 5 faster with maximum optimization compared to without.
+
+
+Troubleshooting?!
+^^^^^^^^^^^^^^^^^
+If in between the compilation process unrecoverable errors occur, attempt first a **make clean** command. 
+If this does not help: Delete everything in the build folder except for the **TopologyTracer2D3D_Parameter.xml** control file and start over with **cmake ..**.
+
+Utilizing the GNU compiler? If the __int64 definition is unknown to the preprocessor and the code therefore does not compile: define it as typedef long __int64 in the **TopologyTracer_Topology.cpp**.
